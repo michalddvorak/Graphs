@@ -1,60 +1,80 @@
 #include <iostream>
-#include <fstream>
-#include <cstring>
 #include <sstream>
-#include "Maze.h"
-#define CMP(x, n) !strncmp(algstr, (x), (n))
+#include <fstream>
+#include "maze.h"
 
-int main(int argc, char ** argv)
+void Menu()
 {
-	if (argc != 3)
+	cout << "Usage: MazeSolve <alg> <filename>" << endl;
+	cout << "alg = 1,...,6" << endl;
+	cout << "1 ... Breadth First Search" << endl;
+	cout << "2 ... Depth First Search" << endl;
+	cout << "3 ... Random Search" << endl;
+	cout << "4 ... Dijkstra's Algorithm" << endl;
+	cout << "5 ... Greedy Algorithm" << endl;
+	cout << "6 ... A*" << endl;
+}
+
+int main(int argc, char** argv)
+{
+	if(argc != 3)
 	{
-		cerr << "Usage: mazesolver <algorithm> <file>" << endl;
-		return 256;
+		Menu();
+		return 1;
+	}
+	int x;
+	stringstream ss;
+	ss << argv[1];
+	ss >> x;
+	if(!ss || x < 1 || x > 6)
+	{
+		cout << "Invalid Input" << endl;
+		Menu();
+		return 1;
 	}
 
-	char *&algstr = argv[1];
-	Algorithm alg;
-	if (CMP("bfs", 3))
-		alg = BFS;
-	else if (CMP("dfs", 3))
-		alg = DFS;
-	else if(CMP("random", 3))
-		alg = Random;
-	else if (CMP("a*",2))
-		alg = Astar;
-	else if(CMP("dijkstra",8))
-		alg = Dijkstra;
-	else if(CMP("greedy", 6))
-		alg = Greedy;
 	fstream fs;
-	fs.open(argv[2],fstream::in);
-	if(!fs.good())
+	fs.open(argv[2]);
+	if(!fs)
 	{
-		cerr << "Error opening file  \"" << argv[2] << "\", probably file doesn't exist?" << endl;
-		return 256;
+		cout << "File \"" << argv[2] << "\" could not be opened, maybe it doesn't exist?" << endl;
+		return 2;
 	}
-
-
-
-
-	// + Y, N - navrhnout metody
-	freopen(argv[2], "r", stdin);
-	Maze m;
-	m.ChangeSleepTime(x); //TADY
-	m.solveMaze(alg);
-	/*Graph<coord>  g;
-	vector<coord> res;
-	g.addVertex(make_pair(0, 0));
-	g.addVertex(make_pair(1, 1));
-	g.addVertex(make_pair(2, 2));
-	g.addVertex(make_pair(3, 3));
-	g.addEdge(make_pair(0, 0), make_pair(1, 1), 1);
-	g.addEdge(make_pair(0, 0), make_pair(2, 2), 1);
-	g.addEdge(make_pair(1, 1), make_pair(2, 2), 1);
-	g.addEdge(make_pair(2, 2), make_pair(0, 0), 1);
-	g.addEdge(make_pair(2, 2), make_pair(3, 3), 1);
-	g.addEdge(make_pair(3, 3), make_pair(3, 3), 1);
-	g.BFS(make_pair(2, 2), res);*/
-
+	freopen(argv[2], "r",stdin);
+	switch(x)
+	{
+		case 1:
+		{
+			Maze::solveMaze(BFS);
+			break;
+		}
+		case 2:
+		{
+			Maze::solveMaze(DFS);
+			break;
+		}
+		case 3:
+		{
+			Maze::solveMaze(Random);
+			break;
+		}
+		case 4:
+		{
+			Maze::solveMaze(Dijkstra);
+			break;
+		}
+		case 5:
+		{
+			Maze::solveMaze(Greedy);
+			break;
+		}
+		case 6:
+		{
+			Maze::solveMaze(Astar);
+			break;
+		}
+		default:
+			break;
+	}
+	return 0;
 }
